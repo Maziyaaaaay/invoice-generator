@@ -34,3 +34,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local sandbox dev-server workaround, not needed once Node is on PATH normally
+dev-launcher.js

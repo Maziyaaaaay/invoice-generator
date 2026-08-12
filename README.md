@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Invoice Studio
 
-## Getting Started
+A free, private, no-signup invoice generator. Everything runs client-side —
+your details and every invoice you make stay on your device and are never
+uploaded anywhere.
 
-First, run the development server:
+## Features
+
+- Live two-pane editor: fill in the form on the left, watch a print-ready
+  invoice update on the right in real time
+- Your sender profile (name, address, payment details, logo) is the only
+  thing saved — to `localStorage`, on this device only
+- A portable "personal link" packs your saved profile into a URL so you can
+  reopen the tool pre-filled on another device, with a privacy warning since
+  payment details live in the link itself
+- 4 distinct invoice themes (Aurora, Ledger, Signature, Mono) with an accent
+  colour picker that computes readable, contrast-safe text automatically
+- Optional logo upload with automatic accent-colour suggestion pulled from
+  the logo's dominant colour
+- 14 currencies with correct locale-aware formatting
+- Save as PDF via the browser's native print dialog — no PDF library needed
+- Fully responsive, with a persistent mobile action bar
+
+## Stack
+
+Next.js 14 (App Router) + TypeScript + Tailwind CSS. No backend, no
+database — state lives in React context, persistence is `localStorage` and
+a URL hash.
+
+## Getting started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `npm run dev` — dev server
+- `npm run build` / `npm run start` — production build & serve
+- `npm run typecheck` — `tsc --noEmit`
+- `npm run lint` — Next.js lint
