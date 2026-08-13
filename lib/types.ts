@@ -59,6 +59,7 @@ export interface InvoiceState {
   profile: SenderProfile;
   client: ClientInfo;
   items: LineItem[];
+  overallDiscountPercent: number;
   taxLabel: string;
   taxRate: number;
   notes: string;

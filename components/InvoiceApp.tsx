@@ -77,11 +77,11 @@ function Workspace() {
     }
     setErrorMap({});
     saveProfile(state.profile);
-    triggerPrint();
+    triggerPrint(state.meta.invoiceNumber);
   }
 
   async function handleShare() {
-    const total = grandTotal(state.items, state.taxRate);
+    const total = grandTotal(state.items, state.taxRate, state.overallDiscountPercent);
     const text = `Invoice ${state.meta.invoiceNumber}${state.client.name ? ` for ${state.client.name}` : ""} — ${formatMoney(total, state.meta.currency)}`;
     const url = typeof window !== "undefined" ? `${window.location.origin}${window.location.pathname}` : "";
     const result = await shareOrCopy({ title: "Invoice Studio", text, url });
@@ -135,8 +135,8 @@ export function InvoiceApp() {
   return (
     <ToastProvider>
       <InvoiceProvider>
-        <div className="min-h-screen pb-28 lg:pb-16">
-          <div className="mx-auto max-w-[1200px] px-4 sm:px-6">
+        <div className="min-h-screen pb-28 lg:pb-16 print:min-h-0 print:pb-0">
+          <div id="page-container" className="mx-auto max-w-[1200px] px-4 sm:px-6">
             <Workspace />
             <footer className="no-print py-10 text-center text-[12px] leading-relaxed text-[var(--muted)]">
               Runs entirely in your browser. Your invoice details are stored on your device and

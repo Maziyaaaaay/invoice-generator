@@ -22,6 +22,7 @@ export type InvoiceAction =
   | { type: "UPDATE_ITEM"; id: string; patch: Partial<LineItem> }
   | { type: "REMOVE_ITEM"; id: string }
   | { type: "SET_TAX"; label?: string; rate?: number }
+  | { type: "SET_OVERALL_DISCOUNT"; percent: number }
   | { type: "SET_NOTES"; notes: string }
   | { type: "SET_META"; patch: Partial<InvoiceMeta> }
   | { type: "SET_DESIGN"; patch: Partial<DesignSettings> }
@@ -33,6 +34,7 @@ export function createInitialState(): InvoiceState {
     profile: emptyProfile,
     client: emptyClient,
     items: [{ id: generateLineItemId(), description: "", qty: 1, rate: 0, discountPercent: 0 }],
+    overallDiscountPercent: 0,
     taxLabel: "Tax",
     taxRate: 0,
     notes: "",
@@ -93,6 +95,8 @@ export function invoiceReducer(state: InvoiceState, action: InvoiceAction): Invo
         taxLabel: action.label ?? state.taxLabel,
         taxRate: action.rate ?? state.taxRate,
       };
+    case "SET_OVERALL_DISCOUNT":
+      return { ...state, overallDiscountPercent: action.percent };
     case "SET_NOTES":
       return { ...state, notes: action.notes };
     case "SET_META":

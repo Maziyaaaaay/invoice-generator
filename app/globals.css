@@ -258,27 +258,29 @@ h1, h2, h3 {
     margin: 12mm;
   }
 
+  html,
   body {
     background: #fff;
+    height: auto;
+    min-height: 0;
   }
 
+  /* Hiding print chrome via display:none (not visibility:hidden) is load-bearing:
+     visibility:hidden keeps hidden elements in normal flow, so the very tall
+     form column would still count toward document height and paginate the
+     invoice across multiple mostly-blank pages. */
   .no-print {
     display: none !important;
   }
 
-  body * {
-    visibility: hidden;
-  }
-
-  #invoice-preview,
-  #invoice-preview * {
-    visibility: visible;
+  #page-container,
+  #preview-pane {
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: none !important;
   }
 
   #invoice-preview {
-    position: absolute;
-    inset: 0;
-    width: 100%;
     box-shadow: none !important;
     border: 0 !important;
     border-radius: 0 !important;

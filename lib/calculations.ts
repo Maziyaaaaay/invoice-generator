@@ -19,15 +19,28 @@ export function lineAmount(item: LineItem): number {
   return lineGrossAmount(item) - lineDiscountAmount(item);
 }
 
+/** Sum of line amounts after each line's own discount, before the overall invoice discount. */
 export function subtotal(items: LineItem[]): number {
   return items.reduce((sum, item) => sum + lineAmount(item), 0);
 }
 
-export function taxAmount(items: LineItem[], taxRate: number): number {
-  const rate = Number.isFinite(taxRate) ? taxRate : 0;
-  return (subtotal(items) * rate) / 100;
+/** The invoice-level discount applied on top of the (already line-discounted) subtotal. */
+export function overallDiscountAmount(items: LineItem[], overallDiscountPercent: number): number {
+  return (subtotal(items) * clampDiscount(overallDiscountPercent)) / 100;
 }
 
-export function grandTotal(items: LineItem[], taxRate: number): number {
-  return subtotal(items) + taxAmount(items, taxRate);
+/** Subtotal after both line discounts and the overall discount — the base tax is computed on. */
+export function netAfterDiscounts(items: LineItem[], overallDiscountPercent: number): number {
+  return subtotal(items) - overallDiscountAmount(items, overallDiscountPercent);
+}
+
+export function taxAmount(items: LineItem[], taxRate: number, overallDiscountPercent: number): number {
+  const rate = Number.isFinite(taxRate) ? taxRate : 0;
+  return (netAfterDiscounts(items, overallDiscountPercent) * rate) / 100;
+}
+
+export function grandTotal(items: LineItem[], taxRate: number, overallDiscountPercent: number): number {
+  return (
+    netAfterDiscounts(items, overallDiscountPercent) + taxAmount(items, taxRate, overallDiscountPercent)
+  );
 }

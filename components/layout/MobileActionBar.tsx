@@ -13,7 +13,7 @@ export function MobileActionBar({
   onSave: () => void;
 }) {
   const { state } = useInvoice();
-  const total = grandTotal(state.items, state.taxRate);
+  const total = grandTotal(state.items, state.taxRate, state.overallDiscountPercent);
 
   return (
     <div className="mobile-bar no-print fixed inset-x-0 bottom-0 z-40 border-t border-[var(--line)] px-4 py-3 backdrop-blur-md pb-[calc(0.75rem+env(safe-area-inset-bottom))]">

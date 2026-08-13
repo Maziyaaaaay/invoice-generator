@@ -14,7 +14,7 @@ import { PreviewNotes } from "./PreviewNotes";
 
 export function InvoicePreview() {
   const { state } = useInvoice();
-  const { profile, client, items, meta, design, taxLabel, taxRate, notes } = state;
+  const { profile, client, items, meta, design, taxLabel, taxRate, overallDiscountPercent, notes } = state;
 
   const accent = design.accentColor || "#5B4CF0";
   const accentInk = getReadableInk(accent);
@@ -53,7 +53,7 @@ export function InvoicePreview() {
   if (profile.payment.bankName) paymentLines.push(`Bank: ${profile.payment.bankName}`);
   if (profile.payment.upiOrPaypal) paymentLines.push(`UPI / PayPal: ${profile.payment.upiOrPaypal}`);
 
-  const total = grandTotal(items, taxRate);
+  const total = grandTotal(items, taxRate, overallDiscountPercent);
 
   return (
     <div
@@ -98,7 +98,14 @@ export function InvoicePreview() {
       </div>
 
       <PreviewLineItems items={items} currency={meta.currency} theme={design.theme} />
-      <PreviewTotals items={items} taxLabel={taxLabel} taxRate={taxRate} currency={meta.currency} theme={design.theme} />
+      <PreviewTotals
+        items={items}
+        taxLabel={taxLabel}
+        taxRate={taxRate}
+        overallDiscountPercent={overallDiscountPercent}
+        currency={meta.currency}
+        theme={design.theme}
+      />
 
       <div className="mt-6 grid grid-cols-2 gap-6 border-t border-[var(--line)] pt-5 avoid-break">
         <div>

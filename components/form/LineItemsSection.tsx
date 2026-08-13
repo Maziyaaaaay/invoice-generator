@@ -12,7 +12,7 @@ import { Button } from "../ui/Button";
 
 export function LineItemsSection({ errorMap }: { errorMap: Record<string, string> }) {
   const { state, dispatch } = useInvoice();
-  const total = grandTotal(state.items, state.taxRate);
+  const total = grandTotal(state.items, state.taxRate, state.overallDiscountPercent);
 
   return (
     <FormSection
@@ -32,7 +32,24 @@ export function LineItemsSection({ errorMap }: { errorMap: Record<string, string
         <Plus size={14} /> Add another line
       </Button>
 
-      <div className="mt-4 grid grid-cols-2 gap-3">
+      <div className="mt-4">
+        <Input
+          label="Overall discount %"
+          hint="Applied to the whole invoice, after per-line discounts and before tax"
+          type="number"
+          inputMode="decimal"
+          min={0}
+          max={100}
+          step="any"
+          value={state.overallDiscountPercent}
+          placeholder="0"
+          onChange={(e) =>
+            dispatch({ type: "SET_OVERALL_DISCOUNT", percent: parseFloat(e.target.value) || 0 })
+          }
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
         <Input
           label="Tax label"
           placeholder="GST / VAT"
