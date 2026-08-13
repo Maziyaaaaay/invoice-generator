@@ -1,4 +1,9 @@
 import { SenderProfile } from "./types";
+import { sanitizeProfile, profileHasContent } from "./sanitize";
+
+// Hard cap on the raw hash we are willing to decode — a legitimate profile
+// (even with a logo) stays well under this.
+const MAX_HASH_LENGTH = 600_000;
 
 function utf8ToBase64(str: string): string {
   const bytes = new TextEncoder().encode(str);
@@ -23,12 +28,11 @@ export function encodeProfileToHash(profile: SenderProfile): string {
 }
 
 export function decodeProfileFromHash(hash: string): SenderProfile | null {
+  if (hash.length > MAX_HASH_LENGTH) return null;
   try {
-    const parsed = JSON.parse(base64ToUtf8(hash));
-    if (parsed && typeof parsed === "object" && "businessName" in parsed) {
-      return parsed as SenderProfile;
-    }
-    return null;
+    const parsed: unknown = JSON.parse(base64ToUtf8(hash));
+    const profile = sanitizeProfile(parsed);
+    return profileHasContent(profile) ? profile : null;
   } catch {
     return null;
   }

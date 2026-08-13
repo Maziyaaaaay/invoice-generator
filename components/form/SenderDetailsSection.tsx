@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo, useReducer, useState } from "react";
 import { useInvoice } from "@/context/InvoiceContext";
 import { useToast } from "@/hooks/useToast";
 import { loadProfile, saveProfile, clearProfile } from "@/lib/storage";
@@ -13,20 +13,21 @@ import { PersonalLinkPanel } from "./PersonalLinkPanel";
 export function SenderDetailsSection({ errorMap }: { errorMap: Record<string, string> }) {
   const { state, dispatch } = useInvoice();
   const { showToast } = useToast();
-  const [isSaved, setIsSaved] = useState(false);
   const [defaultOpen] = useState(() => !loadProfile());
+  // isSaved is derived, not stored: it recomputes when the profile is edited
+  // and when a save/clear bumps the version.
+  const [storageVersion, bumpStorageVersion] = useReducer((v: number) => v + 1, 0);
   const p = state.profile;
-
-  useEffect(() => {
+  const isSaved = useMemo(() => {
     const stored = loadProfile();
-    setIsSaved(!!stored && JSON.stringify(stored) === JSON.stringify(p));
+    return !!stored && JSON.stringify(stored) === JSON.stringify(p);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [p]);
+  }, [p, storageVersion]);
 
   function handleSave() {
     const ok = saveProfile(p);
+    bumpStorageVersion();
     if (ok) {
-      setIsSaved(true);
       showToast("Saved on this device");
     } else {
       showToast("This browser is blocking saving — try turning off private mode");
@@ -39,7 +40,7 @@ export function SenderDetailsSection({ errorMap }: { errorMap: Record<string, st
     }
     clearProfile();
     dispatch({ type: "CLEAR_PROFILE" });
-    setIsSaved(false);
+    bumpStorageVersion();
     showToast("Cleared");
   }
 

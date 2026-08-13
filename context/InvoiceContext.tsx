@@ -25,44 +25,36 @@ interface InvoiceContextValue {
 
 const InvoiceContext = createContext<InvoiceContextValue | null>(null);
 
+// The app renders client-side only (page.tsx disables SSR), so the initial
+// state can be hydrated synchronously from localStorage in the reducer's lazy
+// initializer — no mount effect, no flash of an empty form. A profile carried
+// in the URL hash is NOT auto-applied: it is surfaced as pendingLinkProfile
+// and only dispatched after the user confirms, so a crafted link can never
+// overwrite the saved profile without consent.
+function createHydratedState(): InvoiceState {
+  const base = createInitialState();
+  const savedProfile = loadProfile();
+  const prefs = loadDesignPrefs();
+  return {
+    ...base,
+    profile: savedProfile ?? base.profile,
+    design: {
+      theme: (prefs?.theme as ThemeName) ?? base.design.theme,
+      accentColor: prefs?.accentColor ?? base.design.accentColor,
+    },
+  };
+}
+
 export function InvoiceProvider({ children }: { children: React.ReactNode }) {
-  const [state, dispatch] = useReducer(invoiceReducer, undefined, createInitialState);
-  const [pendingLinkProfile, setPendingLinkProfile] = useState<SenderProfile | null>(null);
-  const [hydrated, setHydrated] = useState(false);
+  const [state, dispatch] = useReducer(invoiceReducer, undefined, createHydratedState);
+  const [pendingLinkProfile, setPendingLinkProfile] = useState<SenderProfile | null>(() =>
+    readProfileFromLocationHash(),
+  );
   const [logoAccent, setLogoAccent] = useState("");
 
   useEffect(() => {
-    // Load whatever profile is already saved on this device first, so it's
-    // never lost — a link's profile (if any) is offered as an optional
-    // overlay below, and dismissing it must leave this one in place.
-    const saved = loadProfile();
-    if (saved) {
-      dispatch({ type: "HYDRATE_PROFILE", profile: saved });
-    }
-
-    const fromHash = readProfileFromLocationHash();
-    if (fromHash) {
-      setPendingLinkProfile(fromHash);
-    }
-
-    const designPrefs = loadDesignPrefs();
-    if (designPrefs?.theme || designPrefs?.accentColor) {
-      dispatch({
-        type: "SET_DESIGN",
-        patch: {
-          ...(designPrefs.theme ? { theme: designPrefs.theme as ThemeName } : {}),
-          ...(designPrefs.accentColor ? { accentColor: designPrefs.accentColor } : {}),
-        },
-      });
-    }
-    setHydrated(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (!hydrated) return;
     saveDesignPrefs({ theme: state.design.theme, accentColor: state.design.accentColor });
-  }, [hydrated, state.design.theme, state.design.accentColor]);
+  }, [state.design.theme, state.design.accentColor]);
 
   const acceptPendingLink = () => {
     if (pendingLinkProfile) {

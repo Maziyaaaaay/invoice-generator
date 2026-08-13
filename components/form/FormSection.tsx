@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useState } from "react";
 import { ChevronRight } from "lucide-react";
 
 interface FormSectionProps {
@@ -24,9 +24,13 @@ export function FormSection({
 }: FormSectionProps) {
   const [open, setOpen] = useState(defaultOpen);
 
-  useEffect(() => {
+  // Adjust state during render when the prop flips (the "storing information
+  // from previous renders" pattern) instead of in an effect.
+  const [prevForceOpen, setPrevForceOpen] = useState(forceOpen);
+  if (forceOpen !== prevForceOpen) {
+    setPrevForceOpen(forceOpen);
     if (forceOpen) setOpen(true);
-  }, [forceOpen]);
+  }
 
   return (
     <section id={id} className="card overflow-hidden transition-shadow duration-200 hover:shadow-[0_2px_14px_rgba(20,21,26,0.04)]">
