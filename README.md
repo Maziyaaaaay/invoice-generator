@@ -4,6 +4,8 @@ A free, private, no-signup invoice generator. Everything runs client-side —
 your details and every invoice you make stay on your device and are never
 uploaded anywhere.
 
+**Live:** https://invoice-generator-two-khaki.vercel.app
+
 ## Features
 
 - Live two-pane editor: fill in the form on the left, watch a print-ready
