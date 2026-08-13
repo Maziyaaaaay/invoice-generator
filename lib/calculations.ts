@@ -1,9 +1,22 @@
 import { LineItem } from "./types";
 
-export function lineAmount(item: LineItem): number {
+function clampDiscount(pct: number): number {
+  if (!Number.isFinite(pct)) return 0;
+  return Math.min(100, Math.max(0, pct));
+}
+
+export function lineGrossAmount(item: LineItem): number {
   const qty = Number.isFinite(item.qty) ? item.qty : 0;
   const rate = Number.isFinite(item.rate) ? item.rate : 0;
   return qty * rate;
+}
+
+export function lineDiscountAmount(item: LineItem): number {
+  return (lineGrossAmount(item) * clampDiscount(item.discountPercent)) / 100;
+}
+
+export function lineAmount(item: LineItem): number {
+  return lineGrossAmount(item) - lineDiscountAmount(item);
 }
 
 export function subtotal(items: LineItem[]): number {

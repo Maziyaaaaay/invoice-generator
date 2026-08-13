@@ -32,13 +32,13 @@ export function createInitialState(): InvoiceState {
   return {
     profile: emptyProfile,
     client: emptyClient,
-    items: [{ id: generateLineItemId(), description: "", qty: 1, rate: 0 }],
+    items: [{ id: generateLineItemId(), description: "", qty: 1, rate: 0, discountPercent: 0 }],
     taxLabel: "Tax",
     taxRate: 0,
     notes: "",
     meta: {
       invoiceNumber: generateInvoiceNumber(),
-      currency: "USD",
+      currency: "INR",
       issueDate: todayISO(),
       dueDate: addDaysISO(15),
     },
@@ -70,7 +70,7 @@ export function invoiceReducer(state: InvoiceState, action: InvoiceAction): Invo
     case "ADD_ITEM":
       return {
         ...state,
-        items: [...state.items, { id: generateLineItemId(), description: "", qty: 1, rate: 0 }],
+        items: [...state.items, { id: generateLineItemId(), description: "", qty: 1, rate: 0, discountPercent: 0 }],
       };
     case "UPDATE_ITEM":
       return {
@@ -83,7 +83,7 @@ export function invoiceReducer(state: InvoiceState, action: InvoiceAction): Invo
       if (state.items.length <= 1) {
         return {
           ...state,
-          items: [{ id: generateLineItemId(), description: "", qty: 1, rate: 0 }],
+          items: [{ id: generateLineItemId(), description: "", qty: 1, rate: 0, discountPercent: 0 }],
         };
       }
       return { ...state, items: state.items.filter((item) => item.id !== action.id) };

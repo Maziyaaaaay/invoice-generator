@@ -15,7 +15,9 @@ export function PreviewLineItems({
   theme: ThemeName;
 }) {
   const visible = items.filter((i) => i.description.trim() || lineAmount(i) > 0);
+  const hasAnyDiscount = visible.some((i) => i.discountPercent > 0);
   const t = THEMES[theme];
+  const colSpan = hasAnyDiscount ? 5 : 4;
 
   return (
     <table className="mb-4 w-full border-collapse">
@@ -24,13 +26,16 @@ export function PreviewLineItems({
           <th className="w-1/2 border-b border-[var(--line)] pb-2 text-left">Description</th>
           <th className="border-b border-[var(--line)] pb-2 text-right">Qty</th>
           <th className="border-b border-[var(--line)] pb-2 text-right">Rate</th>
+          {hasAnyDiscount && (
+            <th className="border-b border-[var(--line)] pb-2 text-right">Disc %</th>
+          )}
           <th className="border-b border-[var(--line)] pb-2 text-right">Amount</th>
         </tr>
       </thead>
       <tbody>
         {visible.length === 0 ? (
           <tr>
-            <td colSpan={4} className="py-4 text-[13px] text-[#9A9E9B]">
+            <td colSpan={colSpan} className="py-4 text-[13px] text-[#9A9E9B]">
               Add what you&apos;re billing for
             </td>
           </tr>
@@ -46,6 +51,11 @@ export function PreviewLineItems({
               <td className="tnum border-b border-[var(--line)] py-2.5 text-right text-[13.5px] align-top">
                 {formatMoney(item.rate, currency)}
               </td>
+              {hasAnyDiscount && (
+                <td className="tnum border-b border-[var(--line)] py-2.5 text-right text-[13.5px] align-top">
+                  {item.discountPercent > 0 ? `${item.discountPercent}%` : "—"}
+                </td>
+              )}
               <td className="tnum border-b border-[var(--line)] py-2.5 text-right text-[13.5px] font-medium align-top">
                 {formatMoney(lineAmount(item), currency)}
               </td>

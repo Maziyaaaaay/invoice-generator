@@ -5,11 +5,11 @@ export interface CurrencyOption {
 }
 
 export const CURRENCIES: CurrencyOption[] = [
+  { code: "INR", symbol: "₹", locale: "en-IN" },
+  { code: "AED", symbol: "AED", locale: "en-AE" },
   { code: "USD", symbol: "$", locale: "en-US" },
   { code: "EUR", symbol: "€", locale: "de-DE" },
   { code: "GBP", symbol: "£", locale: "en-GB" },
-  { code: "INR", symbol: "₹", locale: "en-IN" },
-  { code: "AED", symbol: "AED", locale: "en-AE" },
   { code: "SGD", symbol: "S$", locale: "en-SG" },
   { code: "AUD", symbol: "A$", locale: "en-AU" },
   { code: "CAD", symbol: "C$", locale: "en-CA" },

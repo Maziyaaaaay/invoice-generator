@@ -38,6 +38,7 @@ export interface LineItem {
   description: string;
   qty: number;
   rate: number;
+  discountPercent: number;
 }
 
 export type ThemeName = "aurora" | "ledger" | "signature" | "mono";
